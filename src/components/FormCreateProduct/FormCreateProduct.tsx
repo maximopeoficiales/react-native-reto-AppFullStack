@@ -1,5 +1,5 @@
 import React from 'react';
-import {Formik, useFormik} from 'formik';
+import {useFormik} from 'formik';
 import {StyleSheet, View} from 'react-native';
 import {Button, HelperText, TextInput} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
