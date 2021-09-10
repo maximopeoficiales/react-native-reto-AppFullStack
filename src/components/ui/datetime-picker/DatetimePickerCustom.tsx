@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {Button} from 'react-native-paper';
-import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import {formatDate} from '../../../utils/utils';
@@ -31,11 +30,7 @@ const DatetimePickerCustom = (props: MyProps) => {
   const handleConfirm = (date: Date) => {
     let formattedDate = formatDate(date);
     handleChange(name, formattedDate);
-    Toast.show({
-      type: 'success',
-      text1: 'Completed',
-      text2: formattedDate + ' 👋',
-    });
+
     hideDatePicker();
   };
 

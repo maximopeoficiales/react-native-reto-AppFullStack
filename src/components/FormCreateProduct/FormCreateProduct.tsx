@@ -1,5 +1,5 @@
 import React from 'react';
-import {Formik} from 'formik';
+import {Formik, useFormik} from 'formik';
 import {StyleSheet, View} from 'react-native';
 import {Button, HelperText, TextInput} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -9,7 +9,7 @@ import {Client} from '../../api/entitys/client.entity';
 import {showErrors} from '../../utils/utils';
 import Toast from 'react-native-toast-message';
 import {createClientSchema} from '../../api/validations/client.validation';
-import DatetimePickerCustom from '../ui/datetime-picker/DatetimePicker';
+import DatetimePickerCustom from '../ui/datetime-picker/DatetimePickerCustom';
 
 interface MyProps {}
 const defaultProps: MyProps = {};
@@ -23,89 +23,82 @@ const FormCreateClient = (props: MyProps) => {
     dateBirthday: '',
   };
 
-  return (
-    <>
-      <Formik
-        initialValues={initialProduct}
-        onSubmit={async (values, {resetForm}) => {
-          // reseteo el formulario despues de crear el registro
-          try {
-            let client = await clientApi.create(values);
-            if (client) {
-              // limpiar el formulario
-              resetForm({
-                values: initialProduct,
-              });
-              Toast.show({
-                type: 'success',
-                text1: 'Completed',
-                text2: `Client: ${client.name} ${client.lastname} Successfully Created 👋`,
-              });
-            }
-          } catch (error) {
+  const {handleChange, handleSubmit, values, errors, isValid, setFieldValue} =
+    useFormik({
+      initialValues: initialProduct,
+      onSubmit: async (values: Client, {resetForm}) => {
+        // reseteo el formulario despues de crear el registro
+        try {
+          let client = await clientApi.create(values);
+          if (client) {
+            // limpiar el formulario
+            resetForm({
+              values: initialProduct,
+            });
             Toast.show({
-              type: 'error',
-              text1: 'Error en el servidor',
-              text2: 'Ocurrio un error en la creacion del producto',
+              type: 'success',
+              text1: 'Completed',
+              text2: `Client: ${client.name} ${client.lastname} Successfully Created 👋`,
             });
           }
-        }}
-        validationSchema={createClientSchema}>
-        {({
-          handleChange,
-          handleSubmit,
-          values,
-          errors,
-          isValid,
-          setFieldValue,
-        }) => (
-          <View>
-            <TextInput
-              value={values.name}
-              onChangeText={handleChange('name')}
-              style={styles.input}
-              placeholder="Example: Maximo"
-              mode="outlined"
-              label="Name"
-            />
-            <HelperText type="error" visible={showErrors(errors.name)}>
-              {errors.name}
-            </HelperText>
-            <TextInput
-              value={values.lastname}
-              onChangeText={handleChange('lastname')}
-              style={styles.input}
-              placeholder="Example: Apaza"
-              mode="outlined"
-              label="Lastname"
-            />
-            <HelperText type="error" visible={showErrors(errors.lastname)}>
-              {errors.lastname}
-            </HelperText>
+        } catch (error) {
+          Toast.show({
+            type: 'error',
+            text1: 'Error en el servidor',
+            text2: 'Ocurrio un error en la creacion del producto',
+          });
+        }
+      },
+      validationSchema: createClientSchema,
+    });
 
-            <TextInput
-              value={values.dateBirthday.toString()}
-              style={styles.input}
-              placeholder="Example: 2021-09-01"
-              mode="outlined"
-              label="Date BirthDay"
-              disabled={true}
-            />
-            <HelperText type="error" visible={showErrors(errors.dateBirthday)}>
-              {errors.dateBirthday}
-            </HelperText>
+  return (
+    <>
+      <View>
+        <TextInput
+          value={values.name}
+          onChangeText={handleChange('name')}
+          style={styles.input}
+          placeholder="Example: Maximo"
+          mode="outlined"
+          label="Name"
+        />
+        <HelperText type="error" visible={showErrors(errors.name)}>
+          {errors.name}
+        </HelperText>
+        <TextInput
+          value={values.lastname}
+          onChangeText={handleChange('lastname')}
+          style={styles.input}
+          placeholder="Example: Apaza"
+          mode="outlined"
+          label="Lastname"
+        />
+        <HelperText type="error" visible={showErrors(errors.lastname)}>
+          {errors.lastname}
+        </HelperText>
 
-            <DatetimePickerCustom
-              handleChange={setFieldValue}
-              name="dateBirthday"
-            />
+        <TextInput
+          value={values.dateBirthday.toString()}
+          style={styles.input}
+          placeholder="Example: 2021-09-01"
+          mode="outlined"
+          label="Date BirthDay"
+          disabled={true}
+        />
+        <HelperText type="error" visible={showErrors(errors.dateBirthday)}>
+          {errors.dateBirthday}
+        </HelperText>
 
-            <Button mode="contained" onPress={handleSubmit} disabled={!isValid}>
-              <Icon name="save" size={20} /> Save Client
-            </Button>
-          </View>
-        )}
-      </Formik>
+        <DatetimePickerCustom
+          handleChange={setFieldValue}
+          name="dateBirthday"
+        />
+
+        <Button mode="contained" onPress={handleSubmit} disabled={!isValid}>
+          <Icon name="save" size={20} /> Save Client
+        </Button>
+      </View>
     </>
   );
 };
