@@ -1,7 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useFormik} from 'formik';
-import {StyleSheet, View} from 'react-native';
-import {Button, HelperText, TextInput} from 'react-native-paper';
+import {StyleSheet, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Button,
+  HelperText,
+  TextInput,
+} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import {clientApi} from '../../api/ClientApi';
@@ -10,13 +15,14 @@ import {showErrors} from '../../utils/utils';
 import Toast from 'react-native-toast-message';
 import {createClientSchema} from '../../api/validations/client.validation';
 import DatetimePickerCustom from '../ui/datetime-picker/DatetimePickerCustom';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 interface MyProps {}
 const defaultProps: MyProps = {};
 const FormCreateClient = (props: MyProps) => {
   props = {...defaultProps, ...props};
   const {} = props;
-
+  const [visibility, setVisibility] = useState(false);
   const initialProduct: Client = {
     name: '',
     lastname: '',
@@ -27,9 +33,12 @@ const FormCreateClient = (props: MyProps) => {
     useFormik({
       initialValues: initialProduct,
       onSubmit: async (values: Client, {resetForm}) => {
+        setVisibility(true);
+
         // reseteo el formulario despues de crear el registro
         try {
           let client = await clientApi.create(values);
+          setVisibility(false);
           if (client) {
             // limpiar el formulario
             resetForm({
@@ -51,6 +60,24 @@ const FormCreateClient = (props: MyProps) => {
       },
       validationSchema: createClientSchema,
     });
+
+  if (visibility) {
+    return (
+      <>
+        <View style={styles.containerCenter}>
+          <ActivityIndicator
+            animating={true}
+            color={Colors.red800}
+            style={styles.spinner}
+            size={100}
+          />
+          <Text style={styles.textSpinner}>
+            <Icon name="save" size={35} /> Registering....
+          </Text>
+        </View>
+      </>
+    );
+  }
 
   return (
     <>
@@ -103,6 +130,21 @@ const FormCreateClient = (props: MyProps) => {
   );
 };
 const styles = StyleSheet.create({
+  textSpinner: {
+    fontWeight: 'bold',
+    fontSize: 35,
+    marginBottom: 15,
+    marginTop: 15,
+  },
+  containerCenter: {
+    height: 600,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  spinner: {
+    marginBottom: 10,
+    marginTop: 10,
+  },
   input: {
     marginBottom: 10,
     marginTop: 10,
