@@ -4,7 +4,7 @@ import {
   Headline,
   Provider as PaperProvider,
 } from 'react-native-paper';
-import {StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {Theme} from 'react-native-paper/lib/typescript/types';
 import FormCreateClient from './src/components/FormCreateProduct/FormCreateProduct';
@@ -20,10 +20,10 @@ const App = () => {
   return (
     <>
       <PaperProvider theme={theme}>
-        <View style={globalStyle.container}>
+        <ScrollView style={globalStyle.container}>
           <Headline style={globalStyle.title}>Customer Registration</Headline>
           <FormCreateClient />
-        </View>
+        </ScrollView>
       </PaperProvider>
       <Toast ref={ref => Toast.setRef(ref)} />
     </>

@@ -8,7 +8,7 @@ class ClientApi {
         this.urlClients = `${config.API_URL}/api/clients`;
     }
 
-    async create(client: Client) {
+    async create(client: Client): Promise<UpdateClientDto> {
         let response = await axios.post(this.urlClients, client);
         return (response.data) as UpdateClientDto;
     }
